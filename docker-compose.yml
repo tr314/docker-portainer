@@ -1,0 +1,28 @@
+services:
+  portainer:
+    image: portainer/portainer-ce
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=$APP_PORT"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.lan`)"
+      - "traefik.http.routers.portainer.entrypoints=webinternal"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.services.portainer.loadbalancer.server.port=$APP_PORT"
+
+    ports:
+      - $APP_PORT
+    networks:
+      traefik:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+
+networks:
+  traefik:
+    name: traefik-web
+    external: true
+
+volumes:
+  portainer-data:
+
